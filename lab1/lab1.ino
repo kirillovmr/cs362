@@ -18,7 +18,7 @@ private:
     
 public:
     Light(int pin...): totalPins(0), currentPinIdx(0), previousMillis(0), m_interval(1000) {
-        pins = new byte[10];
+        pins = new byte[MAX_PINS];
 
         // First parameter
         if (isPinValid(pin))
