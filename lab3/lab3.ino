@@ -1,87 +1,117 @@
-/*
-  LiquidCrystal Library - scrollDisplayLeft() and scrollDisplayRight()
+//
+//  Lab 3 - Scrolling output
+//
+//
+//      [    name    ]      ->     [    name    ]     -> ... ->     [    name    ]
+//      [super long j]oke   ->    s[uper long jo]ke   -> ... -> ..jo[ke   super l]ong..
+//                                                                                \
+//        \           \             \            \                    /     \       \___  nextOccurrenceIndex
+//        first         no        posIndex    still no            spaces    second          which  temporary
+//      occurance    truncation              truncation         after 1st.  occurance        truncates joke
+//
+//
+//  Created by Viktor Kirillov on 2/1/20.
+//  Copyright © 2020 Viktor Kirillov. All rights reserved.
+//
 
- Demonstrates the use a 16x2 LCD display.  The LiquidCrystal
- library works with all LCD displays that are compatible with the
- Hitachi HD44780 driver. There are many of them out there, and you
- can usually tell them by the 16-pin interface.
-
- This sketch prints "Hello World!" to the LCD and uses the
- scrollDisplayLeft() and scrollDisplayRight() methods to scroll
- the text.
-
-  The circuit:
- * LCD RS pin to digital pin 12
- * LCD Enable pin to digital pin 11
- * LCD D4 pin to digital pin 5
- * LCD D5 pin to digital pin 4
- * LCD D6 pin to digital pin 3
- * LCD D7 pin to digital pin 2
- * LCD R/W pin to ground
- * 10K resistor:
- * ends to +5V and ground
- * wiper to LCD VO pin (pin 3)
-
- Library originally added 18 Apr 2008
- by David A. Mellis
- library modified 5 Jul 2009
- by Limor Fried (http://www.ladyada.net)
- example added 9 Jul 2009
- by Tom Igoe
- modified 22 Nov 2010
- by Tom Igoe
-
- This example code is in the public domain.
-
- http://www.arduino.cc/en/Tutorial/LiquidCrystalScroll
-
- */
-
-// include the library code:
 #include <LiquidCrystal.h>
+#include <string.h>
+#include "Timer.hpp"
 
-// initialize the library with the numbers of the interface pins
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+class LCDScroller {
+private:
+    const byte m_width, m_height;
+    char *m_name, *m_joke;
+    byte nameLen = 0, jokeLen = 0;
+    
+    LiquidCrystal *m_lcd;
+
+    byte numSpacesAfterJoke = 5;
+    byte posIndex = 0;  // from where the joke should be printed next time
+    byte nextOccurrenceIndex; // where to put '\0' for the next occurence of joke
+    
+public:
+    LCDScroller(byte width, byte height): m_width(width), m_height(height) {
+        m_name = new char[width+1];
+        m_joke = new char[width*2+1];
+    }
+
+    void setup(LiquidCrystal *lcd, const char *name, const char *joke) {
+        m_lcd = lcd;
+        m_lcd->begin(m_width, m_height);
+
+        // Copying parameters into member variables
+        strncpy(m_name, name, m_width);
+        strncpy(m_joke, joke, m_width*2);
+
+        // Getting lengths of strings
+        nameLen = strlen(m_name);
+        jokeLen = strlen(m_joke);
+
+        // Printing name in the center of the 1st line
+        m_lcd->setCursor((m_width-nameLen)/2, 0);
+        m_lcd->print(m_name);
+
+        // Printing joke on the second line
+        m_lcd->setCursor(0,1);
+        m_lcd->print(m_joke);
+        
+        nextOccurrenceIndex = jokeLen + numSpacesAfterJoke;
+    }
+
+    void shiftLeft() {
+        m_lcd->clear();
+
+        // Draw name on the same position
+        m_lcd->setCursor((m_width-nameLen)/2, 0);
+        m_lcd->print(m_name);
+
+        // Draw joke starting from posIndex
+        m_lcd->setCursor(0,1);
+        m_lcd->print(posIndex > jokeLen ? m_joke+jokeLen : m_joke+posIndex);
+
+        // Draw second occurence of joke if needed
+        if (nextOccurrenceIndex < m_width) {
+            // Save character which would be replaced by '\0'
+            byte tmpIdx = m_width - nextOccurrenceIndex;
+            char temp = m_joke[tmpIdx];
+
+            // Truncating the output
+            m_joke[tmpIdx] = '\0';
+            
+            m_lcd->setCursor(nextOccurrenceIndex, 1);
+            m_lcd->print(m_joke);
+
+            // Return the temp character back
+            m_joke[tmpIdx] = temp;
+        }
+
+        // Define the next position counter
+        posIndex += 1;
+        nextOccurrenceIndex -= 1;
+        if (posIndex >= jokeLen + numSpacesAfterJoke) {
+            posIndex = 0;
+            nextOccurrenceIndex = jokeLen + numSpacesAfterJoke;
+        }
+    }
+ 
+};
+
+LCDScroller *controller;
+Timer *timer;
 
 void setup() {
-  // set up the LCD's number of columns and rows:
-  lcd.begin(16, 2);
-  // Print a message to the LCD.
-  lcd.print("hello, world!");
-  lcd.setCursor(0,1);
-  lcd.print("Mitchell");
-  delay(10000);
+    LiquidCrystal *lcd = new LiquidCrystal(12, 11, 5, 4, 3, 2);
+
+    // Controls the whole LCD
+    controller = new LCDScroller(16, 2);
+    controller->setup(lcd, "Volodymyr", "This is a programmers joke.");
+
+    // Controls the time defferences imitating delays
+    timer = new Timer;
+    timer->add( [controller](){ controller->shiftLeft(); }, 300);
 }
 
 void loop() {
-  // scroll 13 positions (string length) to the left
-  // to move it offscreen left:
-  for (int positionCounter = 0; positionCounter < 13; positionCounter++) {
-    // scroll one position left:
-    lcd.scrollDisplayLeft();
-    // wait a bit:
-    delay(150);
-  }
-
-  // scroll 29 positions (string length + display length) to the right
-  // to move it offscreen right:
-  for (int positionCounter = 0; positionCounter < 29; positionCounter++) {
-    // scroll one position right:
-    lcd.scrollDisplayRight();
-    // wait a bit:
-    delay(150);
-  }
-
-  // scroll 16 positions (display length + string length) to the left
-  // to move it back to center:
-  for (int positionCounter = 0; positionCounter < 16; positionCounter++) {
-    // scroll one position left:
-    lcd.scrollDisplayLeft();
-    // wait a bit:
-    delay(150);
-  }
-
-  // delay at the end of the full loop:
-  delay(1000);
-
+    timer->update();
 }
