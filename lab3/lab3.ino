@@ -105,7 +105,7 @@ void setup() {
 
     // Controls the whole LCD
     controller = new LCDScroller(16, 2);
-    controller->setup(lcd, "Volodymyr", "This is a programmers joke.");
+    controller->setup(lcd, "Viktor", "This is a programmers joke.");
 
     // Controls the time defferences imitating delays
     timer = new Timer;
