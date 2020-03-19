@@ -1,6 +1,9 @@
-
-
-
+// Viktor Kirillov - 677621632
+// Lab 5 - Multiple inputs and outputs
+// Description - I have a passive buzzer which is controlled by potentiometer. The potentiometer controls the
+//                delay between the tones. Also I have a photoresistor that controls the number of leds to be turned on.
+// Since ptotoresistor is close to the leds, when the leds are on, resistor value is biased which leads to the turning leds on and off
+// No references used
 #include "Timer.hpp"
 
 class LightSensor {
@@ -8,10 +11,10 @@ private:
     byte leds[4];
     int sensorPin;
 
-    int maxPhotoValue = 100;
+    int maxPhotoValue = 80;
     int sensorValue;
     byte mode = 0;
-    int bias[5];
+//    int bias[5];
 
 public:
     LightSensor(byte l1, byte l2, byte l3, byte l4, int sensor): sensorPin(sensor) {
@@ -27,17 +30,17 @@ public:
         pinMode(l4, OUTPUT);
 
         // Saving the initial sensor value
-        bias[0] = analogRead(sensorPin);
-        Serial.print("0 leds = "); Serial.println(bias[0]);
-        delay(100);
+//        bias[0] = analogRead(sensorPin);
+//        Serial.print("0 leds = "); Serial.println(bias[0]);
+//        delay(100);
 
         // Collect biases
-        for (byte i=0; i<4; i++) {
-            digitalWrite(leds[i], HIGH);
-            delay(100);
-            bias[i+1] = analogRead(sensorPin);
-            Serial.print(i+1); Serial.print(" leds = "); Serial.println(sensorValue);
-        }
+//        for (byte i=0; i<4; i++) {
+//            digitalWrite(leds[i], HIGH);
+//            delay(100);
+//            bias[i+1] = analogRead(sensorPin);
+//            Serial.print(i+1); Serial.print(" leds = "); Serial.println(sensorValue);
+//        }
 
         // Turning all the lights off
         for (byte i=0; i<4; i++)
@@ -52,10 +55,10 @@ public:
 //            maxPhotoValue = sensorValue;
 
         // Unbiasing the value
-        int unbiasedValue = sensorValue;
-        if (mode > 0) {
-            unbiasedValue = sensorValue - (bias[mode] - bias[0]);
-        }
+//        int unbiasedValue = sensorValue;
+//        if (mode > 0) {
+//            unbiasedValue = sensorValue - (bias[mode] - bias[0]);
+//        }
         
         int revertedValue = maxPhotoValue - sensorValue;
         mode = 0;

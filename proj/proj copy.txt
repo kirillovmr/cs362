@@ -1,0 +1,60 @@
+
+#include "Timer.hpp"
+
+class Gamepad {
+private:
+  // Internal pin numbers
+  int m_pinX, m_pinY, m_pinBtn;
+
+  // Actual values readed from pins
+  int xPos, yPos, buttonState;
+
+  // Mapped values
+  int mapX, mapY;
+
+public:
+  Gamepad(int pinX, int pinY, int pinBtn)
+    : m_pinX(pinX), m_pinY(pinY), m_pinBtn(pinBtn)
+  {
+    xPos = yPos = buttonState = 0;
+    mapX = mapY = 0;
+    
+    pinMode(pinX, INPUT);
+    pinMode(pinY, INPUT);
+    pinMode(pinBtn, INPUT_PULLUP); 
+  }
+
+  void loop() {
+    // Reading input values
+    xPos = analogRead(m_pinX);
+    yPos = analogRead(m_pinY);
+    buttonState = digitalRead(m_pinBtn);
+
+    // Mapping values
+    mapX = map(xPos, 0, 1023, -512, 512);
+    mapY = map(yPos, 0, 1023, 512, -512);
+
+    Serial.print("X: ");
+    Serial.print(mapX);
+    Serial.print(" | Y: ");
+    Serial.print(mapY);
+    Serial.print(" | Button: ");
+    Serial.println(buttonState);
+  }
+};
+
+Timer *timer;
+Gamepad *gamepad;
+
+void setup() {
+  Serial.begin(9600); 
+
+  timer = new Timer();
+  gamepad = new Gamepad(A0, A1, 4);
+
+  timer->add( [](){ gamepad->loop(); }, 100 );
+}
+
+void loop() {
+  timer->update();
+}

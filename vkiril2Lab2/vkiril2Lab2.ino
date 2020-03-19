@@ -1,9 +1,9 @@
-//
-// Lab 2
-// Input and Output
-// 
-// Viktor Kirillov
-//
+// Viktor Kirillov - 677621632
+// Lab 2 - Input and Output
+// Description - Using buttons you can increase and decrease the counter by 1, 
+//                after change leds would display current value.
+// No assumptions
+// No references
 
 #include <stdarg.h> // for arbitrary number of args
 
@@ -51,12 +51,14 @@ public:
     }
 
     void update() {
+        // Is button 1 pressed
         if (digitalRead(btn1) == HIGH) {
             if (!pressed) {
                 updateCounter(false);
                 pressed = true;
             }
         }
+        // Is button 2 pressed
         else if (digitalRead(btn2) == HIGH) {
             if (!pressed) {
                 updateCounter(true);
@@ -72,7 +74,8 @@ private:
     bool isPinValid(int pin) {  // Checks for pin to be in valid range
         return (pin > 0 && pin < 30);
     }
-    
+
+    // Increases / decreases the counter
     void updateCounter(bool increase) {
         counter += increase ? 1 : -1;
         counter %= maxValue;
@@ -97,8 +100,8 @@ private:
 BinaryLed *binaryLed;
 
 void setup() {
-    // First 2 inputs are button pins, then arbitrary led pins from left to right
-    binaryLed = new BinaryLed(2, 12, 5, 4, 7, 10);
+    // First 2 inputs are button pins, then arbitrary number of led pins from left to right
+    binaryLed = new BinaryLed(2, 12, 5, 4, 7);
 }
 
 void loop() {

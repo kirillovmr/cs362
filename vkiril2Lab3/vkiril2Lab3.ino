@@ -1,6 +1,7 @@
 //
+//  Viktor Kirillov - 677621632
 //  Lab 3 - Scrolling output
-//
+//  Description - Displays name on the first line and a scrolling text on the second
 //
 //      [    name    ]      ->     [    name    ]     -> ... ->     [    name    ]
 //      [super long j]oke   ->    s[uper long jo]ke   -> ... -> ..jo[ke   super l]ong..
@@ -10,8 +11,8 @@
 //      occurance    truncation              truncation         after 1st.  occurance        truncates joke
 //
 //
-//  Created by Viktor Kirillov on 2/1/20.
-//  Copyright © 2020 Viktor Kirillov. All rights reserved.
+//  LCD is connected to ports 12, 11, 5, 4, 3, 2
+//  No references
 //
 
 #include <LiquidCrystal.h>

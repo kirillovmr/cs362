@@ -1,8 +1,10 @@
 //
+//  Viktor Kirillov - 677621632
 //  Lab 4 - More complicated input
-//
-//  Created by Viktor Kirillov on 2/1/20.
-//  Copyright © 2020 Viktor Kirillov. All rights reserved.
+//  Description: Displays the relative amount of the light in the room on LCD display.
+//  Assumptions: Lowest and Largest values on the photocell are 200 and 800 respectively.
+//               LCD is connected to ports 12, 11, 5, 4, 3, 2; Analog device is connected to pin A0.
+//  No references.
 //
 
 #include <LiquidCrystal.h>
@@ -12,32 +14,34 @@
 class LCDScroller {
 private:
     const byte m_width, m_height;
-    char *m_name;
-    byte nameLen = 0;
+    char *m_firstLine;
+    byte firstLineLen = 0;
 
     char values[6][20] = {"Starting up...", "Dark", "Partially dark", "Medium", "Partially light", "Full lit"};
-    byte prevValue = 0;
+    int lowestValue = 250;
+    int highestValue = 800;
+    int prevValue = 0;
     
     LiquidCrystal *m_lcd;
     
 public:
     LCDScroller(byte width, byte height): m_width(width), m_height(height) {
-        m_name = new char[width+1];
+        m_firstLine = new char[width+1];
     }
 
-    void setup(LiquidCrystal *lcd, const char *name) {
+    void setup(LiquidCrystal *lcd, const char *firstLine) {
         m_lcd = lcd;
         m_lcd->begin(m_width, m_height);
 
         // Copying parameters into member variables
-        strncpy(m_name, name, m_width);
+        strncpy(m_firstLine, firstLine, m_width);
 
         // Getting lengths of strings
-        nameLen = strlen(m_name);
+        firstLineLen = strlen(m_firstLine);
 
-        // Printing name in the center of the 1st line
-        m_lcd->setCursor((m_width-nameLen)/2, 0);
-        m_lcd->print(m_name);
+        // Printing firstLine in the center of the 1st line
+        m_lcd->setCursor((m_width-firstLineLen)/2, 0);
+        m_lcd->print(m_firstLine);
 
         // Printing value on the second line
         m_lcd->setCursor(0,1);
@@ -45,8 +49,16 @@ public:
     }
 
     void update(int value) {
-        // Dividing by 6 just because its a reasonable value in my room
-        int newValue = value/6 + 1;
+        int diapason = highestValue - lowestValue;
+        int delta = diapason / 5;
+
+        // Interpolating the value in the range
+        int newValue = 1;
+        for(int i=lowestValue; i<highestValue; i += delta) {
+            if (i < value) {
+                newValue += 1;
+            }
+        }
 
         // We have max 5 values to display  
         newValue = newValue > 5 ? 5 : newValue;
@@ -57,9 +69,9 @@ public:
     
         m_lcd->clear();
 
-        // Draw name on the same position
-        m_lcd->setCursor((m_width-nameLen)/2, 0);
-        m_lcd->print(m_name);
+        // Draw firstLine on the same position
+        m_lcd->setCursor((m_width-firstLineLen)/2, 0);
+        m_lcd->print(m_firstLine);
 
         // Draw value
         m_lcd->setCursor(0,1);
@@ -90,5 +102,6 @@ void setup() {
 }
 
 void loop() {
+//  Serial.println(analogRead(photoPin));
     timer->update();
 }

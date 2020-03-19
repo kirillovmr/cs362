@@ -1,9 +1,8 @@
-//
-// Lab 1
-// Get started with Arduino
-// 
-// Viktor Kirillov
-//
+// Viktor Kirillov - 677621632
+// Lab 1 - Get started with Arduino
+// Description - lights are turn on sequentially
+// No assumptions
+// No references used
 
 #include <stdarg.h> // for arbitrary number of args
 
@@ -75,7 +74,7 @@ Light *light;
 
 void setup() {
     light = new Light(13,8,7);
-    light->setInterval(100);
+    light->setInterval(500);
 }
 
 void loop() {
