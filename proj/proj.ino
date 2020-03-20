@@ -11,8 +11,6 @@ Timer *timer;
 long int time = millis();
 bool t = false;
 
-int xMap, yMap, xValue, yValue;
-
 void setup() {
   Serial.begin(115200);
   Serial.println("start");
@@ -61,35 +59,69 @@ void setup() {
         String output = "Received: ";
         Serial.println(output + data);
       }
-    }, 100);
 
-    // 22:27:44.823 -> +IPD,8:hi there
-    // 22:27:47.826 -> +IPD,6:Update 
+      int xValue = analogRead(joyX);
+      int yValue = analogRead(joyY);
+      int xMap = map(xValue, 0,1023, 2, 0);
+      int yMap = map(yValue, 0,1023, 3, 0);
+      String x = "X=";
+      String y = "Y=";
+    
+      if (xMap > 1)
+        wifi->sendRight();
+      else if (xMap < 1)
+        wifi->sendLeft();
+      if (yMap > 2)
+        wifi->sendUp();
+      else if (yMap < 1)
+        wifi->sendDown();
+      
+    }, 50);
+
+//    timer->add([wifi](){
+//      int xValue = analogRead(joyX);
+//      int yValue = analogRead(joyY);
+//      int xMap = map(xValue, 0,1023, 2, 0);
+//      int yMap = map(yValue, 0,1023, 3, 0);
+//      String x = "X=";
+//      String y = "Y=";
+//    
+//      if (xMap > 1)
+//        wifi->sendRight();
+//      else if (xMap < 1)
+//        wifi->sendLeft();
+//      if (yMap > 2)
+//        wifi->sendUp();
+//      else if (yMap < 1)
+//        wifi->sendDown();
+//    }, 30);
 }
 
 void loop() { 
-  timer->update();
+//  timer->update();
 //  wifi->feedbackLoop();
 
+    String data = "";
+    if (wifi->readFromServer(data)) {
+      String output = "Received: ";
+      Serial.println(output + data);
+    }
 
-  xValue = analogRead(joyX);
-  yValue = analogRead(joyY);
-  xMap = map(xValue, 0,1023, 2, 0);
-  yMap = map(yValue, 0,1023, 3, 0);
-  String x = "X=";
-  String y = "Y=";
-//  Serial.println(x + xMap);
-//  Serial.println(y + yMap);
-//  Serial.println();
-
-  if (xMap > 1)
-    wifi->sendRight();
-  else if (xMap < 1)
-    wifi->sendLeft();
-  if (yMap > 2)
-    wifi->sendUp();
-  else if (yMap < 1)
-    wifi->sendDown();
+    int xValue = analogRead(joyX);
+    int yValue = analogRead(joyY);
+    int xMap = map(xValue, 0,1023, 2, 0);
+    int yMap = map(yValue, 0,1023, 3, 0);
+    String x = "X=";
+    String y = "Y=";
   
-  delay(100);
+    if (xMap > 1)
+      wifi->sendRight();
+    else if (xMap < 1)
+      wifi->sendLeft();
+    if (yMap > 2)
+      wifi->sendUp();
+    else if (yMap < 1)
+      wifi->sendDown();
+  
+//  delay(100);
 }
