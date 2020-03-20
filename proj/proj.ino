@@ -1,18 +1,27 @@
 
 #include "ESP8266wifi.h"
+#include "Timer.hpp"
+
+#define joyX A5
+#define joyY A4
 
 WifiModule *wifi;
+Timer *timer;
 
 long int time = millis();
 bool t = false;
+
+int xMap, yMap, xValue, yValue;
 
 void setup() {
   Serial.begin(115200);
   Serial.println("start");
 
+//  return;
+
   wifi = new WifiModule(6, 5, 115200, new NoNetworkState());
 
-  delay(2000);
+  delay(500);
   Serial.println("upd");
 
 
@@ -31,38 +40,56 @@ void setup() {
   else {
     Serial.println("rst ok");
   }
-  // check for ready after restart
-  // 13:58:15.693 -> ready
 
-  
-  // check for connected wifi
-  // 13:58:17.870 -> WIFI CONNECTED
-  // 13:58:18.508 -> WIFI GOT IP
-
-  // make sure to enable wifi mode
+  delay(20);
 
   time = millis();
 
-  return;
+//  return;
   
   if (wifi->connectToWifi("Yo Yo Yo", "vovavakhniuk")) {
-//    if (wifi->connectToServer("10.0.0.204", "3010")) {
-//      Serial.println("Connected to server.");
-//    }
+    delay(2000);
+    if (wifi->connectToServer("10.0.0.204", "3010")) {
+      
+    }
   }
+
+    timer = new Timer;
+    timer->add([wifi](){
+      String data = "";
+      if (wifi->readFromServer(data)) {
+        String output = "Received: ";
+        Serial.println(output + data);
+      }
+    }, 100);
+
+    // 22:27:44.823 -> +IPD,8:hi there
+    // 22:27:47.826 -> +IPD,6:Update 
 }
 
-void loop() {
-//  if (time + 8000 < millis() && t == false) {
-//    Serial.println("conn to wifi");
-//    t = true;
-//
-//    if (wifi->connectToWifi("Yo Yo Yo", "vovavakhniuk")) {
-//      if (wifi->connectToServer("10.0.0.204", "3010")) {
-//        Serial.println("Connected to server.");
-//      }
-//    }
-//  }
-  
+void loop() { 
+  timer->update();
 //  wifi->feedbackLoop();
+
+
+  xValue = analogRead(joyX);
+  yValue = analogRead(joyY);
+  xMap = map(xValue, 0,1023, 2, 0);
+  yMap = map(yValue, 0,1023, 3, 0);
+  String x = "X=";
+  String y = "Y=";
+//  Serial.println(x + xMap);
+//  Serial.println(y + yMap);
+//  Serial.println();
+
+  if (xMap > 1)
+    wifi->sendRight();
+  else if (xMap < 1)
+    wifi->sendLeft();
+  if (yMap > 2)
+    wifi->sendUp();
+  else if (yMap < 1)
+    wifi->sendDown();
+  
+  delay(100);
 }
