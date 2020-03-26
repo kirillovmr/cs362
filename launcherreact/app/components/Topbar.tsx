@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './Topbar.css';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faWifi, faDiceD6, faHeart, faServer } from '@fortawesome/free-solid-svg-icons'
+import { faWifi, faCog, faDiceD6, faHeart, faServer } from '@fortawesome/free-solid-svg-icons'
 
 
 import icon from '../../resources/players/ana.png';
@@ -10,16 +10,22 @@ import icon from '../../resources/players/ana.png';
 //https://overwatch.gamepedia.com/Player_Icons
 
 // Icons to be used in top menu
-export const topbarIcons = [ faDiceD6, faHeart ];
+export const topbarIcons = [ faCog, faDiceD6, faHeart ];
 
 export default function Topbar(props: any) {
 
-    const wifiClass = `${styles.inline} ${styles.shadow} ${styles.iconDisconnected}`;
-    const serverClass = `${styles.inline} ${styles.shadow} ${styles.iconDisconnected}`;
+    const wifiClass = `${props.wifiConnected ? styles.iconConnected:styles.iconDisonnected} ${styles.inline} ${styles.shadow}`;
+    const serverClass = `${styles.inline} ${styles.shadow}`;
 
     const renderCenter = () => {
         return topbarIcons.map((icon, i) => {
-            return <FontAwesomeIcon icon={icon} className={`${styles.psIcon} ${styles.shadow} ${props.screenIndex == i ? styles.active : ""} ${props.screenIndex == i && props.selected ? styles.selected : ""}`} />
+            return (
+                <FontAwesomeIcon 
+                    icon={icon}
+                    key={i}
+                    className={`${styles.psIcon} ${styles.shadow} ${props.screenIndex == i ? styles.active : ""} ${props.screenIndex == i && props.selected ? styles.selected : ""}`} 
+                />
+            );
         });
     };
 

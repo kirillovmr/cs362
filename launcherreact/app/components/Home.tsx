@@ -1,31 +1,49 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import routes from '../constants/routes.json';
-import styles from './Home.css';
-
-import Topbar from './TopBar';
+import Topbar, { topbarIcons } from './TopBar';
+import InspiredBy from './InspiredBy';
+import Settings from './Settings';
 import Games from './Games';
-import GameIcon from './GameIcon';
-
-import { topbarIcons } from './Topbar'
 
 var Mousetrap = require('mousetrap');
+var wifi = require("node-wifi");
 
 export default class Home extends React.Component {
-
   state: {
+    wifi: {
+      connected: boolean,
+      ssid: string,
+      quality: number
+    },
+
     topbarSelected: boolean,
     screenIndex: number,
-    scr: Array<number>
+    shiftDx: Array<number>
+    shiftValue: Array<number>,
+    pressValue: Array<number>
   }
+  checkWifiInterval: NodeJS.Timeout;
 
   constructor(props: any) {
     super(props);
     this.state = {
+      wifi: {
+        connected: false,
+        ssid: "",
+        quality: 0
+      },
       topbarSelected: false,
-      screenIndex: 0,
-      scr: [0, 0]
+      screenIndex: 1,
+      shiftDx: [1, 1, 5],
+      shiftValue: [0, 0, 10],
+      pressValue: [0, 0, 0]
     }
+
+    wifi.init({
+      iface: null // network interface, choose a random wifi interface if set to null
+    });
+
+    // Check for wifi
+    this.checkWifiInterval = setInterval(this.getCurrentConnection, 5000);
 
     // Binding UP and DOWN events
     Mousetrap.bind('w', () => { 
@@ -45,9 +63,9 @@ export default class Home extends React.Component {
         }
       }
       else {
-        let temp: Array<number> = this.state.scr.slice();
-        temp[this.state.screenIndex] -= 1;
-        this.setState({...this.state, scr: temp})
+        let temp: Array<number> = this.state.shiftValue.slice();
+        temp[this.state.screenIndex] -= this.state.shiftDx[this.state.screenIndex];
+        this.setState({...this.state, shiftValue: temp})
       }
     });
     Mousetrap.bind('d', () => { 
@@ -57,31 +75,75 @@ export default class Home extends React.Component {
         }
       }
       else {
-        let temp: Array<number> = this.state.scr;
+        let temp: Array<number> = this.state.shiftValue;
+        temp[this.state.screenIndex] += this.state.shiftDx[this.state.screenIndex];;
+        this.setState({...this.state, shiftValue: temp})
+      }
+    });
+
+    // Binding enter
+    Mousetrap.bind('e', () => { 
+      if(!this.state.topbarSelected) {
+        let temp: Array<number> = this.state.pressValue.slice();
         temp[this.state.screenIndex] += 1;
-        this.setState({...this.state, scr: temp})
+        this.setState({...this.state, pressValue: temp});
       }
     });
   }
 
+  getCurrentConnection = () => {
+    wifi.getCurrentConnections((err: any, currentConnections: any) => {
+      if (err) {
+        console.log("Error getting wifi connection", err);
+      }
+      console.log("Wifi connections", currentConnections);
+
+      if (currentConnections.length > 0) {
+        this.setState({
+          ...this.state, 
+          wifi: {
+            ...this.state.wifi, 
+            connected: true,
+            ssid: currentConnections[0].ssid,
+            quality: currentConnections[0].quality
+          }
+        });
+        return currentConnections;
+      }
+      return null;
+    });
+  }
+
+  renderTopbar = () => {
+    return (<Topbar 
+      selected={this.state.topbarSelected} 
+      screenIndex={this.state.screenIndex} 
+      wifiConnected={this.state.wifi.connected}
+    />);
+  }
+
   renderBody = () => {
-    const bodyScreens = [ <Games selected={this.state.scr[0]}  />, <h2>Lol</h2> ];
-    return bodyScreens[this.state.screenIndex];
+    return [ 
+      <Settings 
+        wifiState={this.state.wifi}
+      />,
+      <Games 
+        shiftValue={this.state.shiftValue[1]} 
+        pressValue={this.state.pressValue[1]}  
+        topbarSelected={this.state.topbarSelected}
+      />, 
+      <InspiredBy
+        shiftValue={this.state.shiftValue[2]}
+      />
+    ][this.state.screenIndex];
   }
 
   render() {
     return (
       <div>
-        <Topbar selected={this.state.topbarSelected} screenIndex={this.state.screenIndex} />
+        {this.renderTopbar()}
         {this.renderBody()}
       </div>
     );
   }
 }
-
-/**
- * <div className={styles.container} data-tid="container">
-          <h2>Home</h2>
-          <Link to={routes.COUNTER}>to Counter</Link>
-        </div>
- */

@@ -10,7 +10,8 @@ import GameIcon from './GameIcon';
   
 
 // Keep track of the direction we moved to
-let oldValue = 0;
+let oldShiftValue = 0;
+let oldPressValue = 0;
 
 export default function Games(props: any) {
 
@@ -18,18 +19,30 @@ export default function Games(props: any) {
 
     const renderGameIcons = () => {
         // Moving left
-        if (props.selected < oldValue) {
+        if (props.shiftValue < oldShiftValue) {
             games.unshift(games.pop()!);
         }
         // Moving right
-        if (props.selected > oldValue) {
+        if (props.shiftValue > oldShiftValue) {
             games.push(games.shift()!);
         }
+        // Press ok
+        if (props.pressValue > oldPressValue) {
+            console.log(`Starting ${games[0].name}`);
+        }
+
         // Remembering last value
-        oldValue = props.selected;
+        oldShiftValue = props.shiftValue;
+        oldPressValue = props.pressValue;
 
         return games.map((object, i) => {
-            return <GameIcon object={object} index={i} key={i}/>
+            if (i < 3) {
+                return <GameIcon 
+                    object={object} index={i} key={i}
+                    topbarSelected={props.topbarSelected} 
+                />
+            }
+            return;
         })
     };
 
@@ -38,11 +51,14 @@ export default function Games(props: any) {
             <h3 className={styles.shadow}>Games</h3>
             <div>
                 {renderGameIcons()}
+                <div className={styles.clear}></div>
             </div>
             
             <h5 className={styles.dummyText}>lol</h5>
-            <h5 className={`${styles.onlineText} ${styles.inline}`}>{gameList[0].name}</h5>
+            <h5 className={`${styles.onlineText} ${styles.inline}`}>{gameList[0].name}
                 {games[0].isWifiRequired ? <FontAwesomeIcon icon={faWifi} className={`${styles.inline} ${styles.shadow}`} /> : ""}
+            </h5>
+            <h6 className={styles.inline}>{games[0].isWifiRequired ? "( network connection required )" : ""}</h6>
             <h5 className={styles.descrText}>{gameList[0].description}</h5>
         </div>
       );

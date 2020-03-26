@@ -34,14 +34,25 @@
     padding: 20px 20px 0 0;
     text-align: right;
 }
+.oneThreeRightContainer svg {
+    opacity: .2;
+}
 
 .inline {
     display: inline;
     padding-left: 20px;
 }
-
-.iconDisconnected {
-    opacity: .2;
+.iconDisonnected {
+    /* opacity: 0.2; */
+}
+.iconConnected {
+    animation: connecting .5s 4 linear;
+    animation-fill-mode: forwards;
+}
+@keyframes connecting { 
+    45% { opacity: 0.2; } 
+    50% { opacity: 1; } 
+    100% { opacity: 1; } 
 }
 
 .shadow {
@@ -59,7 +70,15 @@
     font-size: 2rem;
 }
 .selected {
-    border: 1px solid red;
+    /* filter: drop-shadow(0 0 8px rgb(179, 0, 0)); */
+    animation: selectRed 2s infinite;
+}
+@keyframes selectRed {
+    0% { filter: drop-shadow(0 0 8px rgb(241, 43, 43)); }
+    /* 30% { filter: drop-shadow(0 0 10px rgb(241, 43, 43)); } */
+    50% { filter: drop-shadow(0 0 8px rgb(7, 7, 7)); }
+    /* 70% { filter: drop-shadow(0 0 10px rgb(241, 43, 43)); } */
+    100% { filter: drop-shadow(0 0 8px rgb(241, 43, 43)); }
 }
 
 .playerIcon {

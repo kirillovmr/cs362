@@ -33,7 +33,7 @@ const getSelectedClass = (name: String) => {
 
 export default function GameIcon(props: any) {
 
-    const borderClass = `${props.index == 0 ? `${getSelectedClass(props.object.name)}` : ``}`;
+    const borderClass = `${props.index == 0 && !props.topbarSelected ? `${getSelectedClass(props.object.name)}` : ``}`;
 
     return (
         <div className={`${styles.container} `} data-tid="container">
