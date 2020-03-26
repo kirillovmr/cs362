@@ -1,0 +1,68 @@
+.container {
+    font-size: 1.2rem;
+    /* border: 1px solid red; */
+}
+
+.container h5 {
+    font-size: 1.2rem;
+    font-family: "Courier New", Courier, monospace;
+}
+.container span {
+    display: inline-block;
+    vertical-align: top;
+    padding-top: 10px;
+    /* line-height: normal; */
+}
+
+.oneThreeLeftContainer {
+    float: left;
+    width: 33%;
+    padding: 10px 0 0 20px;
+    vertical-align: middle;
+    line-height: 20px;
+}
+.oneThreeCenterContainer {
+    margin:auto;
+    width: 33%;
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.oneThreeRightContainer {
+    float: right;
+    width: 33%;
+    padding: 20px 20px 0 0;
+    text-align: right;
+}
+
+.inline {
+    display: inline;
+    padding-left: 20px;
+}
+
+.iconDisconnected {
+    opacity: .2;
+}
+
+.shadow {
+    filter: drop-shadow(0 0 5px rgba(0,0,0,0.6));
+}
+
+.psIcon {
+    color: #fff;
+    font-size: 1.2rem;
+}
+.psIcon ~ .psIcon {
+    margin-left: 20px;
+}
+.active {
+    font-size: 2rem;
+}
+.selected {
+    border: 1px solid red;
+}
+
+.playerIcon {
+    position: relative;
+    width: 40px;
+}

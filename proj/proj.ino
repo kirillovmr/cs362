@@ -2,13 +2,13 @@
 #include "ESP8266wifi.h"
 #include "Timer.hpp"
 
-#define joyX A5
-#define joyY A4
+#define joyX 5
+#define joyY 4
 
 WifiModule *wifi;
 Timer *timer;
 
-long int time = millis();
+long int _time = millis();
 bool t = false;
 
 void setup() {
@@ -41,7 +41,7 @@ void setup() {
 
   delay(20);
 
-  time = millis();
+  _time = millis();
 
 //  return;
   

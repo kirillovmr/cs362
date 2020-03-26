@@ -1,0 +1,39 @@
+.container {
+    /* border: 1px solid red; */
+    float: left;
+    width: 25%;
+    margin-right: 8%;
+    max-width: 200px;
+    
+}
+
+.container img {
+    width: 100%;
+    border-radius: 25px;
+    filter: drop-shadow(0 0 5px rgba(0,0,0,0.6));
+}
+
+.selectedRed {
+    animation: selectRed 2s infinite;
+}
+@keyframes selectRed {
+    0% { filter: drop-shadow(0 0 10px rgb(241, 43, 43)); }
+    50% { filter: drop-shadow(0 0 10px rgb(7, 7, 7)); }
+    100% { filter: drop-shadow(0 0 10px rgb(241, 43, 43)); }
+}
+.selectedYellow {
+    animation: selectYellow 2s infinite;
+}
+@keyframes selectYellow {
+    0% { filter: drop-shadow(0 0 10px rgb(238, 241, 43)); }
+    50% { filter: drop-shadow(0 0 10px rgb(7, 7, 7)); }
+    100% { filter: drop-shadow(0 0 10px rgb(238, 241, 43)); }
+}
+.selectedGreen {
+    animation: selectGreen 2s infinite;
+}
+@keyframes selectGreen {
+    0% { filter: drop-shadow(0 0 10px rgb(35, 209, 29)); }
+    50% { filter: drop-shadow(0 0 10px rgb(7, 7, 7)); }
+    100% { filter: drop-shadow(0 0 10px rgb(35, 209, 29)); }
+}

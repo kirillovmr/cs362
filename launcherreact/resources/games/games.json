@@ -1,0 +1,20 @@
+[
+    {
+        "name": "Clash of Clans",
+        "icon": "clashofclans.png",
+        "description": "Clash of Clans is a freemium mobile strategy video game developed and published by Finnish game developer Supercell. The game was released for iOS platforms on August 2, 2012, and on Google Play for Android on October 7, 2013.",
+        "isWifiRequired": true
+    },
+    {
+        "name": "PAC-MAN 256",
+        "icon": "pacman.png",
+        "description": "Pac-Man 256 is an endless running video game co-developed by Hipster Whale and 3 Sprockets and published by Bandai Namco Entertainment. The game is part of the Pac-Man series and is inspired by the original Pac-Man game's infamous Level 256 glitch.",
+        "isWifiRequired": false
+    },
+    {
+        "name": "Flappy Bird",
+        "icon": "flappybird.png",
+        "description": "Flappy Bird is a mobile game developed by Vietnamese video game artist and programmer Dong Nguyen, under his game development company dotGears. The game is a side-scroller where the player controls a bird, attempting to fly between columns of green pipes without hitting them.",
+        "isWifiRequired": false
+    }
+]
